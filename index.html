@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>งานประเพณีลอยกระทง บางรักน้อย 2568 – ลอยกระทงออนไลน์</title>
+  <meta name="description" content="เว็บกิจกรรมลอยกระทงออนไลน์ กรอกชื่อและคำอธิษฐาน แล้วคลิกปล่อยกระทงให้ลอยไปบนสายน้ำยามเพ็ญ" />
+  <!-- TailwindCSS via CDN -->
+  <!-- Google Font: Sarabun -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ฟอนต์ไทยทางการ */
+    html, body, button, input, select, textarea { font-family: 'Sarabun', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans Thai', 'Sarabun', sans-serif; }
+    :root{
+      --night-top:#070916; /* ท้องฟ้ากลางคืน */
+      --night-bot:#0b1230;
+      --moon:#fff8d6;
+      --river-top:#0b1f3b;
+      --river-mid:#0a254f;
+      --river-bot:#072042;
+      --glow:#ffd27a66;
+    }
+    /* ฉากท้องฟ้า + ดวงดาว */
+    .sky{background:radial-gradient(1200px 600px at 70% -10%, #1c2756 5%, transparent 40%), linear-gradient(180deg, var(--night-top), var(--night-bot));}
+    .stars{position:absolute; inset:0; pointer-events:none; background-image:radial-gradient(2px 2px at 20% 30%, #ffffffaa 50%, transparent 52%),radial-gradient(2px 2px at 80% 20%, #ffffffaa 50%, transparent 52%),radial-gradient(2px 2px at 60% 70%, #ffffffaa 50%, transparent 52%),radial-gradient(1.5px 1.5px at 35% 80%, #ffffff99 50%, transparent 52%),radial-gradient(1.5px 1.5px at 75% 60%, #ffffff99 50%, transparent 52%);}    
+    /* แม่น้ำ */
+    .river{background:linear-gradient(180deg, var(--river-top), var(--river-mid) 50%, var(--river-bot)); position:relative; overflow:hidden;}
+    .ripples::before, .ripples::after{content:""; position:absolute; inset:0; background:radial-gradient(400px 40px at -10% 30%, #ffffff08 2%, transparent 55%), radial-gradient(400px 40px at 30% 55%, #ffffff08 2%, transparent 55%), radial-gradient(400px 40px at 70% 45%, #ffffff08 2%, transparent 55%), radial-gradient(400px 40px at 110% 60%, #ffffff08 2%, transparent 55%); animation:ripple 18s linear infinite;}
+    .ripples::after{animation-delay: -9s; opacity:.7;}
+    @keyframes ripple{from{transform:translateX(0)} to{transform:translateX(-25%)} }
+    /* กระทง */
+    .krathong{position:absolute; bottom:8%; left:-160px; width:160px; height:160px; display:flex; align-items:flex-end; justify-content:center; filter: drop-shadow(0 6px 10px #0008);
+      animation: driftX var(--dur, 42s) linear forwards, bob 3.2s ease-in-out infinite;}
+    @keyframes driftX{to{transform: translateX(calc(100vw + 260px));}}
+    @keyframes bob{0%,100%{transform: translateY(0)}50%{transform: translateY(-6px)}}
+    /* เปลวเทียนนุ่มๆ */
+    .flame{filter: blur(0.3px); transform-origin: bottom center; animation: flicker .18s infinite alternate;}
+    @keyframes flicker{from{transform:scaleY(1) rotate(-2deg)} to{transform:scaleY(1.08) rotate(2deg)}}
+    /* กล่องคำอธิษฐานโผล่/จาง */
+    .wish-bubble{position:absolute; bottom:120%; left:50%; transform:translateX(-50%); min-width:220px; max-width:260px; background:#0b1025ee; color:#fff; border:1px solid #32407a; border-radius:14px; padding:10px 12px; box-shadow:0 6px 20px #0008; font-size:14px; line-height:1.35; opacity:0; pointer-events:none;}
+    .wish-bubble.show{animation: bubbleIn .8s ease forwards, bubbleStay 4s 0.8s linear forwards, bubbleOut .6s 4.8s ease forwards;}
+    @keyframes bubbleIn{from{transform:translate(-50%, 8px); opacity:0} to{transform:translate(-50%, 0); opacity:1}}
+    @keyframes bubbleStay{to{opacity:1}}
+    @keyframes bubbleOut{to{opacity:0; transform:translate(-50%, -6px)}}
+    /* สวิตช์น่าแตะ */
+    .toggle input:checked + span{background:#0ea5e9}
+    .toggle input:checked + span::after{transform:translateX(1.25rem)}
+    /* ปุ่มน่ากด */
+    .btn{--tw-shadow: 0 12px 18px rgb(14 165 233 / 24%); box-shadow: var(--tw-ring-offset-shadow,0 0 #0000), var(--tw-ring-shadow,0 0 #0000), var(--tw-shadow);}
+    /* แถบน้ำคืบหน้าหลังปล่อย */
+    .progress{position:absolute; bottom:0; left:0; height:3px; background:linear-gradient(90deg, #22d3ee, #60a5fa, #a78bfa); animation: prog var(--dur, 42s) linear forwards;}
+    @keyframes prog{from{width:0} to{width:100%}}
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- ฉากท้องฟ้า -->
+  <section class="sky relative">
+    <div class="stars"></div>
+    <div class="max-w-6xl mx-auto px-4 pt-8 pb-3">
+      <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- โลโก้หน่วยงาน: เปลี่ยน src เป็นไฟล์โลโก้ของคุณ -->
+          <img src="assets/logo.png" alt="ตราหน่วยงาน" class="w-12 h-12 rounded-xl border border-white/20 bg-white/10 object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/7/70/Placeholder.png'">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold leading-tight">งานประเพณีลอยกระทง บางรักน้อย 2568</h1>
+            <p class="text-sm opacity-90">จัดโดย องค์การบริหารส่วนตำบลบางรักน้อย • Loy Krathong Online</p>
+          </div>
+        </div>
+        <div class="text-sm opacity-90">ทำด้วยรักแบบโอเพนซอร์ซ – ใช้ได้กับงานชุมชน/โรงเรียน</div>
+      </header>
+
+      <!-- พื้นที่ควบคุม -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <!-- ฟอร์ม -->
+        <div class="lg:col-span-1 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-6">
+          <h2 class="text-xl font-semibold mb-3">เขียนชื่อและคำอธิษฐาน</h2>
+          <form id="wishForm" class="space-y-4">
+            <div>
+              <label class="block text-sm opacity-90 mb-1">ชื่อที่จะติดบนกระทง</label>
+              <input id="nameInput" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="เช่น แก้วตา, ทีม อบต.บางรักน้อย" required />
+            </div>
+            <div>
+              <label class="block text-sm opacity-90 mb-1">คำอธิษฐาน</label>
+              <textarea id="wishInput" rows="3" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="ให้ครอบครัวปลอดภัย การงานราบรื่น สุขภาพแข็งแรง" required></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm opacity-90 mb-1">รูปแบบกระทง</label>
+                <select id="styleSelect" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20">
+                  <option value="classic">คลาสสิก (ใบตอง)</option>
+                  <option value="lotus">บัวงาม</option>
+                  <option value="pixel">พิกเซลน่ารัก</option>
+                  <option value="paper">กระดาษรีไซเคิล</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm opacity-90 mb-1">โทนสี</label>
+                <select id="colorSelect" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20">
+                  <option value="emerald">เขียวมรกต</option>
+                  <option value="rose">ชมพูอ่อน</option>
+                  <option value="gold">ทองอำไพ</option>
+                  <option value="violet">ม่วงคราม</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer toggle">
+                <input id="ecoToggle" type="checkbox" class="hidden" checked>
+                <span class="w-12 h-6 bg-white/15 rounded-full relative transition">
+                  <i class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition"></i>
+                </span>
+                <span class="text-sm opacity-90">โหมดรักษ์โลก</span>
+              </label>
+              <button class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 active:scale-[.99] btn" type="submit">ลอยกระทง ✨</button>
+            </div>
+          </form>
+
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button id="captureBtn" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15">แชร์ภาพกระทง</button>
+            <button id="clearBtn" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15">ลบประวัติ</button>
+            <button id="listBtn" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15">รายการคำอธิษฐาน</button>
+          </div>
+          <p class="text-xs opacity-80 mt-3">ข้อมูลจะถูกเก็บแบบชั่วคราวในเบราว์เซอร์ของคุณ (LocalStorage) • โค้ดโอเพนซอร์ซในหน้านี้ นำไปใช้/ดัดแปลงได้เต็มที่</p>
+        </div>
+
+        <!-- เวทีกลางน้ำ -->
+        <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-white/10">
+          <div class="relative river aspect-[16/9] ripples" id="riverStage">
+            <!-- ดวงจันทร์และเงา -->
+            <div class="absolute -top-10 right-10 w-28 h-28 rounded-full" style="background:radial-gradient(circle at 50% 50%, var(--moon) 0 60%, #0000 61%); box-shadow:0 0 80px 10px #fff3; opacity:.92"></div>
+            <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+            <!-- Progress line under water surface per-lanuch -->
+            <div id="progressLine" class="progress hidden"></div>
+
+            <!-- ที่ใส่กระทงจะเติมด้วย JS -->
+          </div>
+        </div>
+      </div>
+
+      <footer class="text-xs opacity-70 mt-6 pb-6 leading-relaxed">
+        "น้ำไหลเอื่อย ดวงจันทร์ลอยนิ่ง คำขอพรของเรา…ลอยต่อไป" — ทำไป ขำไป แต่ตั้งใจจริง 🌕
+      </footer>
+    </div>
+  </section>
+
+  <!-- html2canvas สำหรับแคปหน้าจอ -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script>
+  const river = document.getElementById('riverStage');
+  const form = document.getElementById('wishForm');
+  const nameInput = document.getElementById('nameInput');
+  const wishInput = document.getElementById('wishInput');
+  const styleSelect = document.getElementById('styleSelect');
+  const colorSelect = document.getElementById('colorSelect');
+  const ecoToggle = document.getElementById('ecoToggle');
+  const captureBtn = document.getElementById('captureBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const listBtn = document.getElementById('listBtn');
+  const progressLine = document.getElementById('progressLine');
+
+  const STORAGE_KEY = 'loykrathong_wishes_v1';
+
+  const palette = {
+    emerald: {leaf:'#10b981', petal:'#34d399', base:'#065f46', accent:'#fbbf24'},
+    rose:    {leaf:'#f472b6', petal:'#fb7185', base:'#9f1239', accent:'#fde68a'},
+    gold:    {leaf:'#f59e0b', petal:'#fbbf24', base:'#b45309', accent:'#fff1a6'},
+    violet:  {leaf:'#8b5cf6', petal:'#a78bfa', base:'#4c1d95', accent:'#fbcfe8'}
+  };
+
+  const rand = (min,max)=> Math.random()*(max-min)+min;
+  const el = (tag,attrs={})=>{const e=document.createElement(tag); Object.assign(e,attrs); return e};
+
+  function loadWishes(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{ return [] }
+  }
+  function saveWishes(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+  function createFlame(cx,cy){
+    // วาดเปลวไฟแบบง่าย
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M ${cx} ${cy} c -4 -10 6 -16 6 -24 0 -6 -4 -10 -6 -14 -2 4 -6 8 -6 14 0 8 10 14 6 24 z`);
+    path.setAttribute('fill','url(#flameGrad)');
+    path.setAttribute('class','flame');
+    g.appendChild(path);
+    const glow = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    glow.setAttribute('cx',cx); glow.setAttribute('cy',cy+2); glow.setAttribute('r','14');
+    glow.setAttribute('fill','url(#glowGrad)');
+    glow.setAttribute('opacity','0.55');
+    g.appendChild(glow);
+    return g;
+  }
+
+  function krathongSVG(style,color,eco){
+    const c = palette[color] || palette.emerald;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 160 160');
+    svg.setAttribute('width','160'); svg.setAttribute('height','160');
+
+    // defs
+    const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+    const lg = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+    lg.setAttribute('id','waterline'); lg.setAttribute('x1','0'); lg.setAttribute('x2','0'); lg.setAttribute('y1','0'); lg.setAttribute('y2','1');
+    lg.innerHTML = `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>`;
+    const flameGrad = document.createElementNS('http://www.w3.org/2000/svg','radialGradient');
+    flameGrad.setAttribute('id','flameGrad'); flameGrad.innerHTML = `<stop offset="0%" stop-color="#fff9c2"/><stop offset="60%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#ef4444"/>`;
+    const glowGrad = document.createElementNS('http://www.w3.org/2000/svg','radialGradient');
+    glowGrad.setAttribute('id','glowGrad'); glowGrad.innerHTML = `<stop offset="0%" stop-color="#ffd16655"/><stop offset="100%" stop-color="#00000000"/>`;
+    defs.appendChild(lg); defs.appendChild(flameGrad); defs.appendChild(glowGrad);
+    svg.appendChild(defs);
+
+    // เงาน้ำใต้กระทง
+    const shadow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+    shadow.setAttribute('cx','80'); shadow.setAttribute('cy','130'); shadow.setAttribute('rx','50'); shadow.setAttribute('ry','10');
+    shadow.setAttribute('fill','url(#waterline)');
+    shadow.setAttribute('opacity','.35');
+    svg.appendChild(shadow);
+
+    if(style==='pixel'){
+      // พิกเซลน่ารัก
+      const base = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      base.setAttribute('x','30'); base.setAttribute('y','95'); base.setAttribute('width','100'); base.setAttribute('height','22');
+      base.setAttribute('fill', c.base);
+      svg.appendChild(base);
+      for(let i=0;i<7;i++){
+        const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        r.setAttribute('x', 34 + i*14); r.setAttribute('y','78'); r.setAttribute('width','12'); r.setAttribute('height','17');
+        r.setAttribute('fill', i%2? c.leaf : c.petal);
+        svg.appendChild(r);
+      }
+      svg.appendChild(createFlame(80,65));
+    } else if(style==='paper'){
+      // กระดาษรีไซเคิล โทนอบอุ่น
+      const base = document.createElementNS('http://www.w3.org/2000/svg','path');
+      base.setAttribute('d','M35 112 Q80 132 125 112 L125 102 Q80 120 35 102 Z');
+      base.setAttribute('fill', eco ? '#d4b790' : '#bfa78a');
+      svg.appendChild(base);
+      for(let i=0;i<6;i++){
+        const tri = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const x = 42 + i*18; const y=90; const h=22;
+        tri.setAttribute('d',`M ${x} ${y} L ${x+9} ${y-h} L ${x+18} ${y} Z`);
+        tri.setAttribute('fill', i%2? c.leaf: c.petal);
+        svg.appendChild(tri);
+      }
+      svg.appendChild(createFlame(80,62));
+    } else if(style==='lotus'){
+      // บัวงาม
+      for(let r=0;r<2;r++){
+        for(let i=0;i<8;i++){
+          const pet = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+          const a = (Math.PI*2/8)*i + (r?Math.PI/8:0);
+          const cx = 80 + Math.cos(a)* (r?18:28);
+          const cy = 96 + Math.sin(a)* (r?10:16);
+          pet.setAttribute('cx', cx); pet.setAttribute('cy', cy);
+          pet.setAttribute('rx', r? 8: 12); pet.setAttribute('ry', r? 14: 20);
+          pet.setAttribute('fill', r? c.leaf : c.petal);
+          svg.appendChild(pet);
+        }
+      }
+      const base = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+      base.setAttribute('cx','80'); base.setAttribute('cy','110'); base.setAttribute('rx','38'); base.setAttribute('ry','10');
+      base.setAttribute('fill', c.base);
+      svg.appendChild(base);
+      svg.appendChild(createFlame(80,70));
+    } else {
+      // classic ใบตองพับ
+      for(let i=0;i<6;i++){
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const x=30+i*20;
+        path.setAttribute('d',`M ${x} 105 Q ${x+10} 78 ${x+20} 105 Z`);
+        path.setAttribute('fill', i%2? c.leaf : c.petal);
+        svg.appendChild(path);
+      }
+      const base = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      base.setAttribute('x','30'); base.setAttribute('y','108'); base.setAttribute('width','100'); base.setAttribute('height','12');
+      base.setAttribute('rx','6'); base.setAttribute('fill', c.base);
+      svg.appendChild(base);
+      svg.appendChild(createFlame(80,72));
+    }
+
+    // ธูป/เทียน (ลายเส้นเรียบ)
+    const stick = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    stick.setAttribute('x','79'); stick.setAttribute('y','74'); stick.setAttribute('width','2'); stick.setAttribute('height','22');
+    stick.setAttribute('fill', eco? '#f3e8d2' : '#c9b089');
+    svg.appendChild(stick);
+
+    // ดอกไม้เล็กๆ
+    for(let i=0;i<4;i++){
+      const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circ.setAttribute('cx', 52 + i*18); circ.setAttribute('cy', 108 - (i%2?4:0)); circ.setAttribute('r', 3.5);
+      circ.setAttribute('fill', c.accent);
+      svg.appendChild(circ);
+    }
+
+    return svg;
+  }
+
+  function showBubble(parent, text){
+    const b = document.createElement('div'); b.className='wish-bubble';
+    b.innerHTML = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    parent.appendChild(b);
+    requestAnimationFrame(()=> b.classList.add('show'));
+    setTimeout(()=> b.remove(), 5600);
+  }
+
+  function launchKrathong(entry){
+    const {name, wish, style, color, eco} = entry;
+
+    const wrap = document.createElement('div'); wrap.className='krathong';
+    wrap.style.setProperty('--dur', `${Math.floor(rand(34, 58))}s`);
+    wrap.style.bottom = `${rand(6,18)}%`;
+
+    const svg = krathongSVG(style,color,eco);
+    wrap.appendChild(svg);
+
+    const label = document.createElement('div');
+    label.className = 'absolute -bottom-3 text-[11px] px-2 py-0.5 bg-black/40 rounded-md border border-white/10';
+    label.textContent = name || 'ผู้ลอยนิรนาม';
+    wrap.appendChild(label);
+
+    // bubble คำอธิษฐาน
+    showBubble(wrap, `<strong>${(name||'คนดีคนเดิม')}</strong> : ${wish}`);
+
+    river.appendChild(wrap);
+
+    // เส้นคืบหน้าใต้ผิวน้ำ (เอฟเฟกต์สนุก ๆ)
+    progressLine.classList.remove('hidden');
+    progressLine.style.setProperty('--dur', getComputedStyle(wrap).getPropertyValue('--dur'));
+    setTimeout(()=>progressLine.classList.add('hidden'), parseFloat(getComputedStyle(wrap).getPropertyValue('--dur'))*1000);
+  }
+
+  function addEntry(name, wish, style, color, eco){
+    const entry = {name, wish, style, color, eco, at: Date.now()};
+    const arr = loadWishes();
+    arr.push(entry); saveWishes(arr);
+    launchKrathong(entry);
+  }
+
+  // Init
+  loadWishes().slice(-6).forEach(e=> setTimeout(()=> launchKrathong(e), rand(300, 2200)));
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    const wish = wishInput.value.trim();
+    if(!name || !wish){ alert('กรอกชื่อและคำอธิษฐานก่อนนะครับ'); return; }
+    addEntry(name, wish, styleSelect.value, colorSelect.value, ecoToggle.checked);
+    form.reset(); ecoToggle.checked = true; // คงโหมดรักษ์โลกไว้
+  });
+
+  captureBtn.addEventListener('click', async ()=>{
+    const node = river;
+    // ซ่อนบับเบิลชั่วคราว (ถ้ามี)
+    const bubbles = node.querySelectorAll('.wish-bubble');
+    bubbles.forEach(b=> b.classList.remove('show'));
+    setTimeout(async ()=>{
+      const canvas = await html2canvas(node, {backgroundColor:null, scale:2, useCORS:true});
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url; a.download = `loy-krathong-${Date.now()}.png`;
+      a.click();
+    }, 200);
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    if(confirm('ล้างประวัติทั้งหมดบนอุปกรณ์นี้?')){
+      saveWishes([]);
+      river.querySelectorAll('.krathong').forEach(k=> k.remove());
+    }
+  });
+
+  listBtn.addEventListener('click', ()=>{
+    const arr = loadWishes();
+    if(arr.length===0) return alert('ยังไม่มีคำอธิษฐานที่บันทึกไว้');
+    const lines = arr.slice().reverse().map((e,i)=>{
+      const d = new Date(e.at); const t = d.toLocaleString('th-TH');
+      return `${i+1}. [${t}] ${e.name} : ${e.wish}`;
+    }).join('\n');
+    alert(lines);
+  });
+
+  </script>
+</body>
+</html>
