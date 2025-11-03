@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="th">
-\1
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://www.googleapis.com" crossorigin>
-<link rel="stylesheet" href="css/styles.css?v=1762138524">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>สถิติลอยกระทง</title>
   <link rel="icon" href="assets/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script defer src="js/config.js?v=1762138524"></script>
-  <script defer src="js/storage.js?v=1762138524"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script defer src="js/regions.js?v=1762138524"></script>
-  <script defer src="js/fireworks.js?v=1762138524"></script>
 
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.googleapis.com" crossorigin>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
-<script src="js/config.js?v=1762138524"></script>
-<script>try{ if(!firebase.apps.length) firebase.initializeApp(window.AppConfig.firebase); window._db=firebase.firestore(); }catch(e){ console.error('Firebase init',e); }</script>
+<script>
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(window.AppConfig.firebase);
+    window._db = firebase.firestore();
+    console.log('[PRO] Firestore ready');
+  } catch(e){ console.error('Firebase init error', e); }
+</script>
 
 </head>
 <body>
@@ -87,5 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   })
 })
 </script>
+
+<script src="storage.js?pro1762141717"></script>
+<script src="fireworks.js?pro1762141717"></script>
+<script src="app.js?pro1762141717"></script>
 </body>
 </html>
